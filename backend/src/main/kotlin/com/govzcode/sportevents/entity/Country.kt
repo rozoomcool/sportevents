@@ -5,5 +5,8 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "county")
-class Country(): BaseEntity<Long>() {
+class Country(
+    @Column(name = "name", nullable = true, unique = false)
+    var name: String
+): BaseEntity<Long>() {
 }

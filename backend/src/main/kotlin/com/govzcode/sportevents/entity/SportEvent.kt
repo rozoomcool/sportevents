@@ -17,5 +17,5 @@ class SportEvent(
         var program: Program,
         var startsDate: Date,
         var endsDate: Date,
-        var country:
+        var country: Country
 ) : BaseAuditEntity<Long>()
