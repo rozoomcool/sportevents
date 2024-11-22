@@ -6,5 +6,5 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "sport_event")
 class SportEvent(
-
-)
+    var title: String? = null
+) : BaseAuditEntity<Long>()
