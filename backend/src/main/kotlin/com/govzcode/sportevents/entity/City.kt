@@ -5,9 +5,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "program")
-class Program(
+@Table(name = "city")
+class City(
         @Column(name = "name", nullable = false, unique = true)
         var name: String
-): BaseEntity<Long>() {
-}
+) : BaseEntity<Long>()
