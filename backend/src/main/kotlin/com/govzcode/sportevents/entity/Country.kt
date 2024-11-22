@@ -3,12 +3,11 @@ package com.govzcode.sportevents.entity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "county")
+@Table(name = "country")
 class Country(
-    @Column(name = "name", nullable = true, unique = false)
-    var name: String,
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "country_id", referencedColumnName = "id")
-    var region: Region
-): BaseEntity<Long>() {
-}
+        @Column(name = "name", nullable = false, unique = true)
+        var name: String,
+
+        @OneToMany(mappedBy = "country", cascade = [CascadeType.ALL], orphanRemoval = true)
+        var regions: List<Region> = mutableListOf()
+) : BaseEntity<Long>()
