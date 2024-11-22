@@ -9,5 +9,5 @@ class Country(
         var name: String,
 
         @OneToMany(mappedBy = "country", cascade = [CascadeType.ALL], orphanRemoval = true)
-        var regions: List<Region> = mutableListOf()
+        var regions: MutableList<Region> = mutableListOf()
 ) : BaseEntity<Long>()

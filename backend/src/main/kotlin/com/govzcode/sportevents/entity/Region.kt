@@ -13,5 +13,5 @@ class Region(
         var country: Country,
 
         @OneToMany(mappedBy = "region", cascade = [CascadeType.ALL], orphanRemoval = true)
-        var cities: List<City> = mutableListOf()
+        var cities: MutableList<City> = mutableListOf()
 ) : BaseEntity<Long>()
