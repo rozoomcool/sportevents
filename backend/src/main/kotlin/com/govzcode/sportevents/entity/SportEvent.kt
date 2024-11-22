@@ -7,7 +7,7 @@ import java.util.Date
 @Table(name = "sport_event")
 class SportEvent(
         @Column(name = "ekp_id", nullable = false, unique = true)
-        var ekpID: String,
+        var ekpId: String,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "age_group_id", nullable = false)
