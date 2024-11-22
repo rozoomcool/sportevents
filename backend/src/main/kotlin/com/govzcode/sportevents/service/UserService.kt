@@ -9,6 +9,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +19,7 @@ class UserService(
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun getPage(): Page<User> = userRepository.findAll(PageRequest.of(0, 1))
+    fun getPage(pageable: Pageable): Page<User> = userRepository.findAll(pageable)
     fun getAll(): Iterable<User> = userRepository.findAll()
 
     fun findByUsername(username: String): User {

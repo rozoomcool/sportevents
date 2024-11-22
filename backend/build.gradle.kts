@@ -33,10 +33,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
-	implementation("org.springframework.boot:spring-boot-starter-hateoas:3.3.2")
+//	implementation("org.springframework.boot:spring-boot-starter-hateoas:3.3.2")
 //	implementation("de.codecentric:spring-boot-admin-starter-server:3.3.3")
 
-	implementation("org.springframework.boot:spring-boot-starter-data-rest")
+//	implementation("org.springframework.boot:spring-boot-starter-data-rest")
 
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
@@ -48,8 +48,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	compileOnly("org.projectlombok:lombok")
-//	runtimeOnly("org.postgresql:postgresql")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
+//	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
