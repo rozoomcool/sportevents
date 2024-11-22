@@ -91,5 +91,5 @@
 ---
 
 ## 📬 Контакты
-- **Email**: support@example.com
-- **GitHub Issues**: [https://github.com/your-project/issues](https://github.com/your-project/issues)
+- **Email**: rosul.um@gmail.com
+- **GitHub Issues**: [https://github.com/hackathonsrus/pp_50412_skfo_ce_ittoba_60/issues](https://github.com/hackathonsrus/pp_50412_skfo_ce_ittoba_60/issues)
