@@ -74,8 +74,8 @@
 ### Шаги:
 1. Клонируйте проект:
    ```bash
-   git clone https://github.com/your-project.git
-   cd your-project
+   git clone https://github.com/hackathonsrus/pp_50412_skfo_ce_ittoba_60.git
+   pp_50412_skfo_ce_ittoba_60
    ```
 2. Запустите через Docker Compose:
    ```bash
