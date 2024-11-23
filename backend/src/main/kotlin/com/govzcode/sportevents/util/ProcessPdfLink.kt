@@ -124,7 +124,7 @@ class ProcessPdfLink {
         }
 
         return EventDetails(
-            id = title.split(" ")[0],
+            id = title,
             title = sportTitle,
             startDate = startDate,
             country = country,
@@ -216,9 +216,10 @@ class ProcessPdfLink {
             results.forEach() {
                 events.add(
                     SportEventDto(
-                        ekpId = it.id,
-                        title = it.title,
+                        ekpId = it.id.split(" ")[0],
+                        title = it.id.split(" ")[1],
                         targetAuditory = it.targetAudience,
+                        sportTitle = it.title,
                         disciplines = it.disciplines,
                         startsDate = it.startDate,
                         endsDate = it.secondEventDate,
