@@ -1,41 +1,43 @@
 package com.govzcode.sportevents.entity
 
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.util.Date
 
 @Entity
-@Table(name = "sport_event")
+@Table(name = "event")
 class SportEvent(
-        @Column(name = "ekp_id", nullable = false, unique = true)
-        var ekpId: String,
+    @Column(name = "ekp_id", nullable = false, unique = true)
+    var ekpId: String,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "target_auditory_id", nullable = false)
-        var targetAuditory: TargetAuditory,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "target_auditory_id", nullable = false)
+    var targetAuditory: TargetAuditory,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "discipline_id", nullable = false)
-        var discipline: Discipline,
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "event_discipline",
+        joinColumns = [JoinColumn(name = "event_id")],
+        inverseJoinColumns = [JoinColumn(name = "discipline_id")]
+    )
+    var disciplines: MutableList<Discipline>,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "program_id", nullable = false)
-        var program: Program,
+    @Column(name = "title", nullable = false)
+    var title: String,
 
-        var startsDate: Date,
-        var endsDate: Date,
+    var startsDate: Date,
+    var endsDate: Date,
 
-//        @ManyToOne(fetch = FetchType.EAGER)
-//        @JoinColumn(name = "country_id", nullable = false)
-//        var country: Country,
-//
-//        @ManyToOne(fetch = FetchType.EAGER)
-//        @JoinColumn(name = "region_id", nullable = false)
-//        var region: Region,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "country_id", nullable = false)
+    var country: Country,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "city_id", nullable = false)
-        var city: City,
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "event_region",
+        joinColumns = [JoinColumn(name = "event_id")],
+        inverseJoinColumns = [JoinColumn(name = "region_id")]
+    )
+    val regions: Set<Region> = hashSetOf(),
 
-        var numberOfParticipant: Long
+    var numberOfParticipant: Long
 ) : BaseAuditEntity<Long>()

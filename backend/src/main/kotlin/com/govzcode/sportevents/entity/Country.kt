@@ -7,9 +7,5 @@ import jakarta.persistence.*
 @Table(name = "country")
 class Country(
         @Column(name = "name", nullable = false, unique = true)
-        var name: String,
-
-        @OneToMany(mappedBy = "country", cascade = [CascadeType.ALL], orphanRemoval = true)
-        @JsonManagedReference
-        var regions: MutableList<Region> = mutableListOf()
+        var name: String
 ) : BaseEntity<Long>()

@@ -14,11 +14,8 @@ class SportEventService(
     private val sportEventRepository: SportEventRepository,
     private val countryRepository: CountryRepository,
     private val regionRepository: RegionRepository,
-    private val cityRepository: CityRepository,
     private val disciplineRepository: DisciplineRepository,
-    private val programRepository: ProgramRepository,
     private val targetAuditoryRepository: TargetAuditoryRepository,
-    private val genderRepository: GenderRepository
 ) {
 
     fun filter(spec: Example<SportEvent>, page: Pageable): PageableDto<SportEvent> {
@@ -52,33 +49,28 @@ class SportEventService(
         val country = countryRepository.findByName(sportEventDto.country)
             ?: countryRepository.save(Country(name = sportEventDto.country))
 
-        val region = regionRepository.findByNameAndCountry(sportEventDto.region, country)
-            ?: regionRepository.save(Region(name = sportEventDto.region, country = country))
+        val regions = sportEventDto.regions.map {
+            regionRepository.findByName(it) ?: regionRepository.save(Region(it))
+        }
 
-        val city = cityRepository.findByNameAndRegion(sportEventDto.city, region)
-            ?: cityRepository.save(City(name = sportEventDto.city, region = region))
-
-        val discipline = disciplineRepository.findByName(sportEventDto.discipline)
-            ?: disciplineRepository.save(Discipline(name = sportEventDto.discipline))
+        val disciplines = sportEventDto.disciplines.map {
+            disciplineRepository.findByName(it) ?: disciplineRepository.save(Discipline(it))
+        }
 
         val targetAuditory = targetAuditoryRepository.findByName(sportEventDto.targetAuditory)
             ?: targetAuditoryRepository.save(TargetAuditory(sportEventDto.targetAuditory))
 
-        val program = programRepository.findByName(sportEventDto.program)
-            ?: programRepository.save(Program(sportEventDto.program))
-
         // Создаем SportEvent и сохраняем
         val sportEvent = SportEvent(
             ekpId = sportEventDto.ekpId,
-//            country = country,
-//            region = region,
-            city = city,
             startsDate = sportEventDto.startsDate,
             endsDate = sportEventDto.endsDate,
             numberOfParticipant = sportEventDto.numberOfParticipants,
-            discipline = discipline,
+            disciplines = disciplines.toMutableList(),
             targetAuditory = targetAuditory,
-            program = program
+            country = country,
+            regions = regions.toMutableSet(),
+            title = sportEventDto.title
         )
 
         return sportEventRepository.save(sportEvent)

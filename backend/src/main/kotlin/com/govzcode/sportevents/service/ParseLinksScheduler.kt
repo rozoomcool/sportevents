@@ -33,33 +33,30 @@ class ParseLinksScheduler(
 //            logger.error(e.message)
 //        }
 //    }
-//
-//    @Scheduled(fixedRate = 30000)
-//    fun getSportEvent() {
-//        try {
-//            logger.info("START PROCESS PDF LINKS")
-//            val processPdfLink = processPdfLinkProvider.getObject()
-//            val link = eventLinkService.findUnChecked() ?: return
-//            val data = processPdfLink.getPdfData(link.link)
-//            data.forEach{
-//                sportEventService.createSportEvent(it)
-//            }
-//        } catch (e: Exception) {
-//            logger.error(e.message)
-//        }
-//    }
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRate = 30000)
     fun getSportEvent() {
         try {
             logger.info("START PROCESS PDF LINKS")
             val processPdfLink = processPdfLinkProvider.getObject()
-            val data = processPdfLink.getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf")
-            data.forEach{
-                sportEventService.createSportEvent(it)
+//            val link = eventLinkService.findUnChecked() ?: return
+            val data = processPdfLink.getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"){
+                try {
+                    sportEventService.createSportEvent(it)
+                } catch (e: Exception) {
+                    logger.error("${e.message}")
+                }
+            }
+            logger.info("PARSE ${data.size} data")
+            data.forEach {
+                try {
+                    sportEventService.createSportEvent(it)
+                } catch (e: Exception) {
+                    logger.error("${e.message}")
+                }
             }
         } catch (e: Exception) {
-            logger.error(e.message)
+            logger.error("ERROR IN PROCESS PDF ${e.message}")
         }
     }
 

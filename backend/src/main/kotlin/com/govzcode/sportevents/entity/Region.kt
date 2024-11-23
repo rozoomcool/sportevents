@@ -10,12 +10,6 @@ class Region(
         @Column(name = "name", nullable = false, unique = true)
         var name: String,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "country_id", nullable = false)
-        @JsonBackReference
-        var country: Country,
-
-        @OneToMany(mappedBy = "region", cascade = [CascadeType.ALL], orphanRemoval = true)
-        @JsonManagedReference
-        var cities: MutableList<City> = mutableListOf()
+        @ManyToMany(mappedBy = "regions")
+        val sportEvents: Set<SportEvent> = hashSetOf()
 ) : BaseEntity<Long>()

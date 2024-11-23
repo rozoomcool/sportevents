@@ -15,11 +15,11 @@ import java.util.*
 data class EventDetails(
     val id: String,
     val title: String,
-    val startDate: Date?,
+    val startDate: Date,
     val country: String,
     val participants: Int,
     val targetAudience: String,
-    val secondEventDate: Date?,
+    val secondEventDate: Date,
     val locations: List<String>,
     val disciplines: List<String>
 )
@@ -67,7 +67,7 @@ class ProcessPdfLink {
 
         // Находим первую дату
         val startDateString = parts.find { it.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}")) }
-        val startDate = extractDate(startDateString ?: "")
+        val startDate = extractDate(startDateString ?: "")!!
 
         // Страна идет после первой даты
         val country = parts.getOrNull(parts.indexOf(startDateString) + 1) ?: ""
@@ -84,7 +84,7 @@ class ProcessPdfLink {
         val secondEventDateString = parts.dropWhile { !it.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}")) }
             .drop(1)
             .find { it.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}")) }
-        val secondEventDate = extractDate(secondEventDateString ?: "")
+        val secondEventDate = extractDate(secondEventDateString ?: "")!!
 
         // Локации — все после второй даты
         val locations = parts.dropWhile { it != secondEventDateString }
@@ -112,10 +112,10 @@ class ProcessPdfLink {
                             replace("КЛАСС", "")
                             trim()
                         }.split(" ").filter {
-                            it.trim().isEmpty() || it.contains(
+                            it.trim().isEmpty() && (it.contains(
                                 "класс",
                                 ignoreCase = false
-                            ) || it.contains("дисцип", ignoreCase = false)
+                            ) || it.contains("дисцип", ignoreCase = false))
                         })
                 }
             } else {
@@ -183,8 +183,10 @@ class ProcessPdfLink {
         return eventMap
     }
 
-    fun getPdfData(url: String): List<SportEventDto> {
+    fun getPdfData(url: String, onFind: (SportEventDto) -> Unit): List<SportEventDto> {
+        this.logger.info("START")
         val document = parsePdfFromUrl(url)
+        this.logger.info("DOWNLOADED")
         val events = mutableListOf<SportEventDto>()
 
         try {
@@ -198,10 +200,12 @@ class ProcessPdfLink {
 
             // Группируем события по ID
             val groupedEvents = groupEvents(lines)
+            this.logger.info("GROUP")
             val results = mutableListOf<EventDetails>()
 
             groupedEvents.forEach {
                 try {
+                    this.logger.info("go go go")
                     // Извлекаем детали мероприятия
                     results.add(extractEventDetails(it.value, it.key.split(" ")[1]))
                 } catch (_: Exception) {
@@ -211,24 +215,20 @@ class ProcessPdfLink {
 
 
             logger.info("Found $results.size")
-            // Печать первых 100 результатов
-            results.forEach {
-                try {
-                    events.add(
-                        SportEventDto(
-                            ekpId = it.id,
-                            title = it.title,
-                            targetAuditory = it.targetAudience,
-                            disciplines = it.disciplines,
-                            startsDate = it.startDate!!,
-                            endsDate = it.secondEventDate!!,
-                            country = it.country,
-                            regions = it.locations,
-                            numberOfParticipants = it.participants.toLong()
-                        )
+            results.forEach() {
+                onFind(
+                    SportEventDto(
+                        ekpId = it.id,
+                        title = it.title,
+                        targetAuditory = it.targetAudience,
+                        disciplines = it.disciplines,
+                        startsDate = it.startDate,
+                        endsDate = it.secondEventDate,
+                        country = it.country,
+                        regions = it.locations,
+                        numberOfParticipants = it.participants.toLong()
                     )
-                } catch (_: Exception) {
-                }
+                )
             }
 
         } catch (e: Exception) {
