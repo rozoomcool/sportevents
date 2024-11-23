@@ -24,7 +24,7 @@ class ParseLinks(
             }
             return links
         } catch (e: Exception) {
-            logger.error("Ошибка при парсинге ссылок")
+            logger.error("Ошибка при парсинге ссылок: ${e.message}")
             throw ParserException("Error parse Links")
         }
     }
