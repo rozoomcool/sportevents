@@ -8,9 +8,8 @@ import jakarta.validation.constraints.Size
 @Schema(description = "Запрос на регистрацию")
 class SignRequest(
     @Schema(description = "Имя пользователя", example = "micky")
-    @Size(min = 5, max = 50, message = "Имя пользователя должно содержать от 5 до 50 символов")
     @NotBlank(message = "Имя пользователя не может быть пустыми")
-    @Email()
+    @Email(message = "Это поле Email")
     var username: String,
 
     @Schema(description = "Пароль", example = "turtle")
