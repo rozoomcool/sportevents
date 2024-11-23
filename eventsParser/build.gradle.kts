@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("org.springframework:spring-context:6.1.14")
 
+
     // Selenium Java API
     implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
 

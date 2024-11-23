@@ -17,7 +17,7 @@ class SportEventService(
     private val cityRepository: CityRepository,
     private val disciplineRepository: DisciplineRepository,
     private val programRepository: ProgramRepository,
-    private val ageGroupRepository: AgeGroupRepository,
+    private val targetAuditoryRepository: TargetAuditoryRepository,
     private val genderRepository: GenderRepository
 ) {
 
@@ -48,14 +48,11 @@ class SportEventService(
         val discipline = disciplineRepository.findByName(sportEventDto.discipline)
             ?: disciplineRepository.save(Discipline(name = sportEventDto.discipline))
 
-        val ageGroup = ageGroupRepository.findByName(sportEventDto.ageGroup)
-            ?: ageGroupRepository.save(AgeGroup(sportEventDto.ageGroup))
+        val targetAuditory = targetAuditoryRepository.findByName(sportEventDto.targetAuditory)
+            ?: targetAuditoryRepository.save(TargetAuditory(sportEventDto.targetAuditory))
 
         val program = programRepository.findByName(sportEventDto.program)
             ?: programRepository.save(Program(sportEventDto.program))
-
-        val gender = genderRepository.findByName(sportEventDto.gender)
-            ?: genderRepository.save(Gender(sportEventDto.gender))
 
         // Создаем SportEvent и сохраняем
         val sportEvent = SportEvent(
@@ -67,9 +64,8 @@ class SportEventService(
             endsDate = sportEventDto.endsDate,
             numberOfParticipant = sportEventDto.numberOfParticipants,
             discipline = discipline,
-            ageGroup = ageGroup,
-            program = program,
-            gender = gender
+            targetAuditory = targetAuditory,
+            program = program
         )
 
         return sportEventRepository.save(sportEvent)

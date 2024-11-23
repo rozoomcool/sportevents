@@ -30,6 +30,12 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-impl:0.12.5")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
+	implementation("io.github.bonigarcia:webdrivermanager:5.9.2")
+	implementation("com.squareup.okhttp3:okhttp:4.11.0")
+	implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
+	implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.26.0")
+	implementation("org.apache.pdfbox:pdfbox:2.0.29")
+
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 

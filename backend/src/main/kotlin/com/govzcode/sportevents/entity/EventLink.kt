@@ -10,6 +10,7 @@ class EventLink(
     @Column(name = "title", nullable = false, unique = true)
     var title: String,
     @Column(name = "link", nullable = false)
-    var link: String
+    var link: String,
+    var checked: Boolean = false
 ): BaseEntity<Long>() {
 }

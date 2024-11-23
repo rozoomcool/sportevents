@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface EventLinkRepository: CrudRepository<EventLink, Long> {
+    fun findByTitle(title: String): EventLink?
 }

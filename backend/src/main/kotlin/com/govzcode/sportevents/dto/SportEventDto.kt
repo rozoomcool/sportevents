@@ -1,9 +1,7 @@
 package com.govzcode.sportevents.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
 import java.util.Date
 
 @Schema(description = "Модель спортивного события")
@@ -14,15 +12,11 @@ data class SportEventDto(
 
     @Schema(description = "Возрастная категория", example = "от 14 до 17")
     @NotBlank(message = "Возрастная категория не может быть пустыми")
-    val ageGroup: String,
+    val targetAuditory: String,
 
     @Schema(description = "Дисциплина", example = "метание козявок")
     @NotBlank(message = "Дисциплина не может быть пустой")
     val discipline: String,
-
-    @Schema(description = "Гендер", example = "мужик или баба")
-    @NotBlank(message = "Гендер не может быть пустой")
-    val gender: String,
 
     @Schema(description = "Программа", example = "Туда сюда миллионер")
     @NotBlank(message = "Программа не может быть пустой")

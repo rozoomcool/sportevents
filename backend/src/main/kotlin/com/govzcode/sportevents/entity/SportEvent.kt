@@ -10,16 +10,12 @@ class SportEvent(
         var ekpId: String,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "age_group_id", nullable = false)
-        var ageGroup: AgeGroup,
+        @JoinColumn(name = "target_auditory_id", nullable = false)
+        var targetAuditory: TargetAuditory,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "discipline_id", nullable = false)
         var discipline: Discipline,
-
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "gender_id", nullable = false)
-        var gender: Gender,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "program_id", nullable = false)
