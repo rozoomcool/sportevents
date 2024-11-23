@@ -1,5 +1,6 @@
 package com.govzcode.sportevents.util
 
+import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -22,6 +23,7 @@ class WebDriverComponent {
     }
 
     private fun initDriver() {
+        WebDriverManager.chromedriver().setup()
         val options = ChromeOptions()
         options.addArguments("--headless=new")
         options.addArguments("--disable-gpu")

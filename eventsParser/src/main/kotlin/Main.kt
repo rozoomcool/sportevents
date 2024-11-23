@@ -4,9 +4,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 fun main(args: Array<String>) {
     val context = AnnotationConfigApplicationContext(AppConfig::class.java)
-    println(context.getBean(ProcessPdfLink::class.java).getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"))
+//    println(context.getBean(ProcessPdfLink::class.java).getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"))
 
-    val pdfUrl = "https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"
+//    val pdfUrl = "https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"
 
 
     // Try adding program arguments via Run/Debug configuration.

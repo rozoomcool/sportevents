@@ -32,9 +32,10 @@ dependencies {
 
 	implementation("io.github.bonigarcia:webdrivermanager:5.9.2")
 	implementation("com.squareup.okhttp3:okhttp:4.11.0")
-	implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
-	implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.26.0")
+	implementation("org.seleniumhq.selenium:selenium-java:4.12.1")
+	implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.12.1")
 	implementation("org.apache.pdfbox:pdfbox:2.0.29")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
 
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
@@ -45,6 +46,7 @@ dependencies {
 //	implementation("org.springframework.boot:spring-boot-starter-data-rest")
 	implementation("com.turkraft.springfilter:jpa:3.1.7")
 	implementation("com.turkraft.springfilter:core:3.1.7")
+	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -55,8 +57,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	compileOnly("org.projectlombok:lombok")
-//	runtimeOnly("org.postgresql:postgresql")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
+//	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
