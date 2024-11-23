@@ -205,7 +205,6 @@ class ProcessPdfLink {
 
             groupedEvents.forEach {
                 try {
-                    this.logger.info("go go go")
                     // Извлекаем детали мероприятия
                     results.add(extractEventDetails(it.value, it.key.split(" ")[1]))
                 } catch (_: Exception) {
@@ -214,9 +213,8 @@ class ProcessPdfLink {
             }
 
 
-            logger.info("Found $results.size")
             results.forEach() {
-                onFind(
+                events.add(
                     SportEventDto(
                         ekpId = it.id,
                         title = it.title,
