@@ -15,4 +15,5 @@ FROM openjdk:21-jdk
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8000
+EXPOSE 4444
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
