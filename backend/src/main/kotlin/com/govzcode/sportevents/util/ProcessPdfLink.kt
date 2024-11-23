@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class EventDetails(
+    val id: String,
     val title: String,
     val startDate: Date?,
     val country: String,
@@ -123,6 +124,7 @@ class ProcessPdfLink {
         }
 
         return EventDetails(
+            id = title.split(" ")[0],
             title = sportTitle,
             startDate = startDate,
             country = country,
@@ -208,10 +210,25 @@ class ProcessPdfLink {
             }
 
 
-            println(results.size)
+            logger.info("Found $results.size")
             // Печать первых 100 результатов
-            results.take(100).forEach {
-                println(it)
+            results.forEach {
+                try {
+                    events.add(
+                        SportEventDto(
+                            ekpId = it.id,
+                            title = it.title,
+                            targetAuditory = it.targetAudience,
+                            disciplines = it.disciplines,
+                            startsDate = it.startDate!!,
+                            endsDate = it.secondEventDate!!,
+                            country = it.country,
+                            regions = it.locations,
+                            numberOfParticipants = it.participants.toLong()
+                        )
+                    )
+                } catch (_: Exception) {
+                }
             }
 
         } catch (e: Exception) {
