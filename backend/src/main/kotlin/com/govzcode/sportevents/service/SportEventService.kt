@@ -36,7 +36,7 @@ class SportEventService(
             totalElements = entity.totalElements,
             page = entity.number,
             size = entity.size,
-            totalPages = entity.count()
+            totalPages = entity.totalPages
         )
     }
 
