@@ -14,16 +14,16 @@ spring:
     username: guest
     password: guest
 
-  datasource:
-    url: jdbc:h2:mem:mydb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
 #  datasource:
-#    url: jdbc:postgresql://localhost:5432/sportevent
-#    driverClassName: org.postgresql.Driver
-#    username: postgres
-#    password: root
+#    url: jdbc:h2:mem:mydb
+#    username: sa
+#    password: password
+#    driverClassName: org.h2.Driver
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sportevent
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: root
   jpa:
     hibernate:
 #      ddl-auto: create-drop
