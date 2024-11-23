@@ -11,6 +11,86 @@ import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
 import java.util.*
 
+data class EventDetails(
+    val id: String,
+    val title: String,
+    val startDate: Date?,
+    val country: String,
+    val participants: Int,
+    val targetAudience: List<String>,
+    val regionsAndCities: List<String>,
+    val disciplines: List<String>
+)
+
+fun extractEventDetails(input: String): EventDetails {
+    val lines = input.split("\n") // Разбиваем на строки
+
+    // Обрабатываем первую строку
+    val firstLine = lines[0]
+    val firstLineParts = firstLine.split(" ")
+
+    val id = firstLineParts[0]
+    val title = firstLineParts.subList(1, firstLineParts.size - 4).joinToString(" ")
+    val startDateString = firstLineParts[firstLineParts.size - 4]
+    val country = firstLineParts[firstLineParts.size - 3]
+    val participants = firstLineParts[firstLineParts.size - 2].toInt()
+
+    // Преобразуем строку с датой в объект Date
+    val startDate = extractDate(startDateString)
+
+    // Обрабатываем целевую аудиторию
+    val targetAudienceString = lines[1]
+    val targetAudience = targetAudienceString.split(",").map { it.trim() }
+
+    // Обрабатываем даты целевой аудитории (если есть)
+    val targetDateString = lines.getOrNull(2) ?: ""
+
+    // Обрабатываем регионы и города (остальные строки после первой)
+    val regionsAndCities = mutableListOf<String>()
+    val disciplines = mutableListOf<String>()
+    var isDisciplinesSection = false
+
+    for (i in 2 until lines.size) {
+        val line = lines[i]
+
+        // Пропускаем пустые строки
+        if (line.isBlank()) continue
+
+        // Если строка содержит слово "Дисциплина" или выглядит как дисциплина
+        if (line.contains("дисциплина", ignoreCase = true) || line.length < 50) {
+            disciplines.add(line)
+            isDisciplinesSection = true
+        } else {
+            // Все остальные строки добавляем в регионы/города
+            if (!isDisciplinesSection) {
+                regionsAndCities.add(line)
+            } else {
+                disciplines.add(line)
+            }
+        }
+    }
+
+    return EventDetails(
+        id,
+        title,
+        startDate,
+        country,
+        participants,
+        targetAudience,
+        regionsAndCities,
+        disciplines
+    )
+}
+
+fun extractDate(dateString: String): Date? {
+    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return try {
+        dateFormat.parse(dateString)
+    } catch (e: Exception) {
+        null // если не удалось распарсить дату
+    }
+}
+
 @Component
 @Scope("prototype")
 class ProcessPdfLink(
@@ -37,6 +117,43 @@ class ProcessPdfLink(
         }
     }
 
+    // Функция для группировки строк по ID
+    fun groupEvents(lines: List<String>): Map<String, String> {
+        val eventMap = mutableMapOf<String, String>()
+        var currentEventId: String? = null
+        var currentEventDetails = StringBuilder()
+
+        for (line in lines) {
+            // Пропускаем строки, начинающиеся с "Стр." или содержащие слово "состав"
+            if (line.startsWith("Стр.") || line.contains("состав", ignoreCase = true)) {
+                continue
+            }
+
+            // Пытаемся найти ID мероприятия
+            val match = Regex("""^\d{16}""").find(line)
+            if (match != null) {
+                // Если нашли новый ID мероприятия, сохраняем текущий и начинаем новый
+                if (currentEventId != null) {
+                    eventMap[currentEventId] = currentEventDetails.toString().trim()
+                }
+
+                // Устанавливаем новый ID мероприятия
+                currentEventId = match.value
+                currentEventDetails = StringBuilder(line)  // Начинаем с новой строки
+            } else {
+                // Если строка не содержит ID мероприятия, добавляем её к текущему мероприятию
+                currentEventDetails.append(" ").append(line)
+            }
+        }
+
+        // Добавляем последний собранный блок (если есть)
+        if (currentEventId != null) {
+            eventMap[currentEventId] = currentEventDetails.toString().trim()
+        }
+
+        return eventMap
+    }
+
     fun getPdfData(url: String): List<SportEventDto> {
         val document = parsePdfFromUrl(url)
         val events = mutableListOf<SportEventDto>()
@@ -51,57 +168,58 @@ class ProcessPdfLink(
             val text = stripper.getText(document)
             val lines = text.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
 
-            var currentDiscipline = ""
-            var currentEventFirstLine: String? = null
-            var currentEventSecondLine: String? = null
-            val descriptionLines = mutableListOf<String>()
-            var lineCounter = 0
 
-            lines.forEach { line ->
-                when {
-                    line.matches(Regex("^[А-Я\\s]+$")) -> {
-                        currentDiscipline = line
-                    }
-
-                    line.matches(Regex("^\\d+\\s+.*")) -> {
-                        if (currentEventFirstLine != null) {
-                            val event = parseEvent(
-                                currentEventFirstLine,
-                                currentEventSecondLine,
-                                descriptionLines,
-                                currentDiscipline,
-                                dateFormat
-                            )
-                            event?.let { events.add(it) }
-                        }
-
-                        currentEventFirstLine = line
-                        currentEventSecondLine = null
-                        descriptionLines.clear()
-                        lineCounter = 0
-                    }
-
-                    else -> {
-                        if (lineCounter == 0 && currentEventFirstLine != null) {
-                            currentEventSecondLine = line
-                            lineCounter++
-                        } else {
-                            descriptionLines.add(line)
-                        }
-                    }
-                }
+            val groupedEvents = groupEvents(lines)
+            val data = groupedEvents.map {
+                extractEventDetails(it.value)
             }
 
-            if (currentEventFirstLine != null) {
-                val event = parseEvent(
-                    currentEventFirstLine,
-                    currentEventSecondLine,
-                    descriptionLines,
-                    currentDiscipline,
-                    dateFormat
-                )
-                event?.let { events.add(it) }
-            }
+
+//            lines.forEach { line ->
+//                when {
+//                    line.matches(Regex("^[А-Я\\s]+$")) -> {
+//                        currentDiscipline = line
+//                    }
+//
+//                    line.matches(Regex("^\\d+\\s+.*")) -> {
+//                        if (currentEventFirstLine != null) {
+//                            val event = parseEvent(
+//                                currentEventFirstLine,
+//                                currentEventSecondLine,
+//                                descriptionLines,
+//                                currentDiscipline,
+//                                dateFormat
+//                            )
+//                            event?.let { events.add(it) }
+//                        }
+//
+//                        currentEventFirstLine = line
+//                        currentEventSecondLine = null
+//                        descriptionLines.clear()
+//                        lineCounter = 0
+//                    }
+//
+//                    else -> {
+//                        if (lineCounter == 0 && currentEventFirstLine != null) {
+//                            currentEventSecondLine = line
+//                            lineCounter++
+//                        } else {
+//                            descriptionLines.add(line)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (currentEventFirstLine != null) {
+//                val event = parseEvent(
+//                    currentEventFirstLine,
+//                    currentEventSecondLine,
+//                    descriptionLines,
+//                    currentDiscipline,
+//                    dateFormat
+//                )
+//                event?.let { events.add(it) }
+//            }
         } catch (e: Exception) {
             logger.error("Ошибка при обработке PDF: ${e.message}", e)
         } finally {
