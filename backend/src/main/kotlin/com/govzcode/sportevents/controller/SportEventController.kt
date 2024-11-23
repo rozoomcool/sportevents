@@ -28,11 +28,6 @@ class SportEventController(
         return sportEventService.page(PageRequest.of(page, size))
     }
 
-    @GetMapping
-    fun all(): Iterable<SportEvent> {
-        return sportEventService.all()
-    }
-
 
     @PostMapping
     fun create(@RequestBody @Valid sportEventDto: SportEventDto): SportEvent {
