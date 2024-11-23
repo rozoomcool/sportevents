@@ -1,5 +1,6 @@
 package com.govzcode.sportevents.entity
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.ManyToMany
@@ -12,6 +13,7 @@ class Discipline(
     var name: String,
 
     @ManyToMany(mappedBy = "disciplines")
+    @JsonBackReference
     val sportEvents: Set<SportEvent> = HashSet()
 ): BaseEntity<Long>() {
 }

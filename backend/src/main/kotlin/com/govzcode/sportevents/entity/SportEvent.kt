@@ -1,5 +1,6 @@
 package com.govzcode.sportevents.entity
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.util.Date
 
@@ -19,6 +20,7 @@ class SportEvent(
         joinColumns = [JoinColumn(name = "event_id")],
         inverseJoinColumns = [JoinColumn(name = "discipline_id")]
     )
+    @JsonManagedReference
     var disciplines: MutableList<Discipline>,
 
     @Column(name = "title", nullable = false)
@@ -37,6 +39,7 @@ class SportEvent(
         joinColumns = [JoinColumn(name = "event_id")],
         inverseJoinColumns = [JoinColumn(name = "region_id")]
     )
+    @JsonManagedReference
     val regions: Set<Region> = hashSetOf(),
 
     var numberOfParticipant: Long

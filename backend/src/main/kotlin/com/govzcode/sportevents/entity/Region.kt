@@ -11,5 +11,6 @@ class Region(
         var name: String,
 
         @ManyToMany(mappedBy = "regions")
+        @JsonBackReference
         val sportEvents: Set<SportEvent> = hashSetOf()
 ) : BaseEntity<Long>()
