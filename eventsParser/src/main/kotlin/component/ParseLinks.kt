@@ -3,10 +3,12 @@ package component
 import exception.ParserException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import service.ParseLinksService
 
-@Component("prototype")
+@Component
+@Scope("prototype")
 class ParseLinks(
     private val webDriverComponent: WebDriverComponent,
     private val parseLinksService: ParseLinksService

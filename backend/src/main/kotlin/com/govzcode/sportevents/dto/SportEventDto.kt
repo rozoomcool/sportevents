@@ -20,6 +20,10 @@ data class SportEventDto(
     @NotBlank(message = "Дисциплина не может быть пустой")
     val discipline: String,
 
+    @Schema(description = "Гендер", example = "мужик или баба")
+    @NotBlank(message = "Гендер не может быть пустой")
+    val gender: String,
+
     @Schema(description = "Программа", example = "Туда сюда миллионер")
     @NotBlank(message = "Программа не может быть пустой")
     val program: String,

@@ -17,7 +17,8 @@ class SportEventService(
     private val cityRepository: CityRepository,
     private val disciplineRepository: DisciplineRepository,
     private val programRepository: ProgramRepository,
-    private val ageGroupRepository: AgeGroupRepository
+    private val ageGroupRepository: AgeGroupRepository,
+    private val genderRepository: GenderRepository
 ) {
 
     fun filter(spec: Example<SportEvent>, page: Pageable): PageableDto<SportEvent> {
@@ -53,6 +54,9 @@ class SportEventService(
         val program = programRepository.findByName(sportEventDto.program)
             ?: programRepository.save(Program(sportEventDto.program))
 
+        val gender = genderRepository.findByName(sportEventDto.gender)
+            ?: genderRepository.save(Gender(sportEventDto.gender))
+
         // Создаем SportEvent и сохраняем
         val sportEvent = SportEvent(
             ekpId = sportEventDto.ekpId,
@@ -64,7 +68,8 @@ class SportEventService(
             numberOfParticipant = sportEventDto.numberOfParticipants,
             discipline = discipline,
             ageGroup = ageGroup,
-            program = program
+            program = program,
+            gender = gender
         )
 
         return sportEventRepository.save(sportEvent)

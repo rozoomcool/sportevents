@@ -18,6 +18,10 @@ class SportEvent(
         var discipline: Discipline,
 
         @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "gender_id", nullable = false)
+        var gender: Gender,
+
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "program_id", nullable = false)
         var program: Program,
 
