@@ -4,6 +4,7 @@ import com.govzcode.sportevents.dto.PageableDto
 import com.govzcode.sportevents.dto.SportEventDto
 import com.govzcode.sportevents.entity.SportEvent
 import com.govzcode.sportevents.repository.SportEventRepository
+import com.govzcode.sportevents.service.FilterService
 import com.govzcode.sportevents.service.SportEventService
 import com.turkraft.springfilter.boot.Filter
 import jakarta.validation.Valid
@@ -18,19 +19,28 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api/v1/events")
 class SportEventController(
-    private val sportEventService: SportEventService
+    private val sportEventService: SportEventService,
+    private val filterService: FilterService
 ) {
     @GetMapping("/search")
     fun search(
         @RequestParam(defaultValue = "10") size: Int,
-        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "1") page: Int
     ): PageableDto<SportEvent> {
         return sportEventService.page(PageRequest.of(page, size))
     }
 
-    @GetMapping()
-    fun search(): Iterable<SportEvent> {
-        return sportEventService.all()
+    @GetMapping("/filter")
+    fun filter(
+        @Filter
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam params: Map<String, String>,
+    ): PageableDto<SportEvent> {
+        return sportEventService.filter(
+            filterService.buildSpecification<SportEvent>(params, SportEvent::class.java),
+            PageRequest.of(page, size)
+        )
     }
 
 

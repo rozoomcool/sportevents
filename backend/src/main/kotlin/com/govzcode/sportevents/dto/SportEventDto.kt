@@ -22,6 +22,10 @@ data class SportEventDto(
     @NotBlank(message = "Название не может быть пустой")
     val title: String,
 
+    @Schema(description = "Название", example = "Туда сюда миллионер")
+    @NotBlank(message = "Название не может быть пустой")
+    val sportTitle: String,
+
     @Schema(description = "Дата начала")
     val startsDate: Date,
     @Schema(description = "Дата конца")

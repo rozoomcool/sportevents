@@ -217,7 +217,7 @@ class ProcessPdfLink {
                 events.add(
                     SportEventDto(
                         ekpId = it.id.split(" ")[0],
-                        title = it.id.split(" ")[1],
+                        title = it.id.substring(startIndex = it.id.split(" ")[0].length + 1),
                         targetAuditory = it.targetAudience,
                         sportTitle = it.title,
                         disciplines = it.disciplines,

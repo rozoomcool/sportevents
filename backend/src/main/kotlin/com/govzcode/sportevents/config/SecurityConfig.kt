@@ -45,6 +45,7 @@ class SecurityConfiguration(
                             .requestMatchers("/api/v1/auth/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/user/all/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
+                            .requestMatchers("/ws/**").permitAll()
                             .requestMatchers("/media/**", "/actuator/**", "/health/**", "/ping/**", "/error/**").permitAll()
                             .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated()

@@ -7,6 +7,7 @@ import com.govzcode.sportevents.repository.*
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +19,7 @@ class SportEventService(
     private val targetAuditoryRepository: TargetAuditoryRepository,
 ) {
 
-    fun filter(spec: Example<SportEvent>, page: Pageable): PageableDto<SportEvent> {
+    fun filter(spec: Specification<SportEvent>, page: Pageable): PageableDto<SportEvent> {
         val entity = sportEventRepository.findAll(spec, page)
         return PageableDto(
             content = entity.content,
@@ -70,7 +71,8 @@ class SportEventService(
             targetAuditory = targetAuditory,
             country = country,
             regions = regions.toMutableSet(),
-            title = sportEventDto.title
+            title = sportEventDto.title,
+            sportTitle = sportEventDto.sportTitle
         )
 
         return sportEventRepository.save(sportEvent)

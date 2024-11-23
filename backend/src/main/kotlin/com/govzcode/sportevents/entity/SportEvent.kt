@@ -26,6 +26,9 @@ class SportEvent(
     @Column(name = "title", nullable = false)
     var title: String,
 
+    @Column(name = "sport_title", nullable = false)
+    var sportTitle: String,
+
     var startsDate: Date,
     var endsDate: Date,
 
