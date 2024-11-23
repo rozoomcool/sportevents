@@ -20,27 +20,41 @@ class ParseLinksScheduler(
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(fixedRate = 5000)
-    fun getLinks() {
-        try {
-            logger.info("START PARSE LINKS")
-            val parseLinksCmp = parseLinksProvider.getObject()
-            val links = parseLinksCmp.parseLinks()
-            links.forEach {
-                eventLinkService.create(EventLink(title = it.key, link = it.value))
-            }
-        } catch (e: Exception) {
-            logger.error(e.message)
-        }
-    }
+//    @Scheduled(fixedRate = 5000)
+//    fun getLinks() {
+//        try {
+//            logger.info("START PARSE LINKS")
+//            val parseLinksCmp = parseLinksProvider.getObject()
+//            val links = parseLinksCmp.parseLinks()
+//            links.forEach {
+//                eventLinkService.create(EventLink(title = it.key, link = it.value))
+//            }
+//        } catch (e: Exception) {
+//            logger.error(e.message)
+//        }
+//    }
+//
+//    @Scheduled(fixedRate = 30000)
+//    fun getSportEvent() {
+//        try {
+//            logger.info("START PROCESS PDF LINKS")
+//            val processPdfLink = processPdfLinkProvider.getObject()
+//            val link = eventLinkService.findUnChecked() ?: return
+//            val data = processPdfLink.getPdfData(link.link)
+//            data.forEach{
+//                sportEventService.createSportEvent(it)
+//            }
+//        } catch (e: Exception) {
+//            logger.error(e.message)
+//        }
+//    }
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 3000)
     fun getSportEvent() {
         try {
             logger.info("START PROCESS PDF LINKS")
             val processPdfLink = processPdfLinkProvider.getObject()
-            val link = eventLinkService.findUnChecked() ?: return
-            val data = processPdfLink.getPdfData(link.link)
+            val data = processPdfLink.getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf")
             data.forEach{
                 sportEventService.createSportEvent(it)
             }
