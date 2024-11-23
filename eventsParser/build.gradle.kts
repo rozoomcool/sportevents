@@ -27,17 +27,16 @@ dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:5.9.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
 
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+//    implementation("org.springframework.kafka:spring-kafka")
+
+    // Apache PDFBox для обработки PDF
+    implementation("org.apache.pdfbox:pdfbox:2.0.29")
+
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.4.12")
 
-//    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-//
-//    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-//    testImplementation("org.springframework.boot:spring-boot-starter-test")
-//    testImplementation("io.projectreactor:reactor-test")
-//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
     testImplementation(kotlin("test"))
 }

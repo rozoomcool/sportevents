@@ -10,9 +10,5 @@ import org.springframework.context.annotation.ComponentScan
 //@Import(WebDriverComponent::class)
 @ComponentScan("component", "service")
 class AppConfig {
-    @Bean
-    fun a(webDriverComponent: WebDriverComponent): String {
-        webDriverComponent.run { driver ->  println(driver.toString()) }
-        return "a"
-    }
+
 }
