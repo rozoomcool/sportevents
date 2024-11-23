@@ -13,5 +13,6 @@ RUN gradle clean build -x test --no-daemon
 
 FROM openjdk:21-jdk
 ARG JAR_FILE=app/build/libs/*.jar
+RUN ls
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
