@@ -9,24 +9,30 @@ import com.turkraft.springfilter.boot.Filter
 import jakarta.validation.Valid
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping(name = "api/v1/events")
+@RequestMapping("api/v1/events")
 class SportEventController(
     private val sportEventService: SportEventService
 ) {
     @GetMapping("/search")
-    fun search(@Filter spec: Example<SportEvent>, pageable: Pageable): PageableDto<SportEvent> {
-        return sportEventService.filter(spec, pageable)
+    fun search(
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "1") page: Int,
+    ): PageableDto<SportEvent> {
+        return sportEventService.page(PageRequest.of(page, size))
     }
+
+    @GetMapping
+    fun all(): Iterable<SportEvent> {
+        return sportEventService.all()
+    }
+
 
     @PostMapping
     fun create(@RequestBody @Valid sportEventDto: SportEventDto): SportEvent {

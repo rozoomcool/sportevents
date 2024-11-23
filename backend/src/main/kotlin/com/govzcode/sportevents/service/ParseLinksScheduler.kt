@@ -15,6 +15,7 @@ class ParseLinksScheduler(
     private val eventLinkService: EventLinkService,
     private val parseLinksProvider: ObjectProvider<ParseLinks>,
     private val processPdfLinkProvider: ObjectProvider<ProcessPdfLink>,
+    private val sportEventService: SportEventService
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -36,11 +37,13 @@ class ParseLinksScheduler(
     @Scheduled(fixedRate = 30000)
     fun getSportEvent() {
         try {
-            logger.info("START PARSE LINKS")
+            logger.info("START PROCESS PDF LINKS")
             val processPdfLink = processPdfLinkProvider.getObject()
             val link = eventLinkService.findUnChecked() ?: return
-            processPdfLink.getPdfData(link.link)
-
+            val data = processPdfLink.getPdfData(link.link)
+            data.forEach{
+                sportEventService.createSportEvent(it)
+            }
         } catch (e: Exception) {
             logger.error(e.message)
         }

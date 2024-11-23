@@ -35,7 +35,7 @@ dependencies {
 	implementation("org.seleniumhq.selenium:selenium-java:4.12.1")
 	implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.12.1")
 	implementation("org.apache.pdfbox:pdfbox:2.0.29")
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+//	implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
 
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")

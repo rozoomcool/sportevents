@@ -32,6 +32,19 @@ class SportEventService(
         )
     }
 
+    fun page(page: Pageable): PageableDto<SportEvent> {
+        val entity = sportEventRepository.findAll(page)
+        return PageableDto(
+            content = entity.content,
+            totalElements = entity.totalElements,
+            page = entity.number,
+            size = entity.size,
+            totalPages = entity.count()
+        )
+    }
+
+    fun all(): Iterable<SportEvent> = sportEventRepository.findAll()
+
     @Transactional
     fun createSportEvent(
         sportEventDto: SportEventDto
@@ -57,8 +70,8 @@ class SportEventService(
         // Создаем SportEvent и сохраняем
         val sportEvent = SportEvent(
             ekpId = sportEventDto.ekpId,
-            country = country,
-            region = region,
+//            country = country,
+//            region = region,
             city = city,
             startsDate = sportEventDto.startsDate,
             endsDate = sportEventDto.endsDate,

@@ -1,5 +1,6 @@
 package com.govzcode.sportevents.entity
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 
 @Entity
@@ -9,5 +10,6 @@ class Country(
         var name: String,
 
         @OneToMany(mappedBy = "country", cascade = [CascadeType.ALL], orphanRemoval = true)
+        @JsonManagedReference
         var regions: MutableList<Region> = mutableListOf()
 ) : BaseEntity<Long>()
