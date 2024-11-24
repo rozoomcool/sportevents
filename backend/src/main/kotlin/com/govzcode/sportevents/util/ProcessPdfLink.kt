@@ -17,7 +17,6 @@ data class EventDetails(
     val startDate: Date,
     val country: String,
     val participants: Int,
-    val toDelete: String,
     val secondEventDate: Date,
     val locations: List<String>,
     val targetAudience: List<String>
@@ -153,7 +152,6 @@ class ProcessPdfLink {
             startDate = startDate,
             country = country,
             participants = participants,
-            toDelete = targetAudience,
             secondEventDate = secondEventDate,
             locations = listOf(locations[0]),
             targetAudience = audit
