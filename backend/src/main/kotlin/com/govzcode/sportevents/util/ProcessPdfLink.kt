@@ -153,7 +153,7 @@ class ProcessPdfLink {
             country = country,
             participants = participants,
             secondEventDate = secondEventDate,
-            locations = listOf(locations[0]),
+            locations = listOf(locations[0].split("-")[0]),
             targetAudience = audit
         )
 
