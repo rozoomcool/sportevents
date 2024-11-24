@@ -1,7 +1,6 @@
 package com.govzcode.sportevents.util
 
 import com.govzcode.sportevents.dto.SportEventDto
-import com.govzcode.sportevents.util.UnsafeOkHttpClient
 import okhttp3.Request
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
@@ -18,10 +17,10 @@ data class EventDetails(
     val startDate: Date,
     val country: String,
     val participants: Int,
-    val targetAudience: String,
+    val toDelete: String,
     val secondEventDate: Date,
     val locations: List<String>,
-    val disciplines: List<String>
+    val targetAudience: List<String>
 )
 
 @Component
@@ -57,7 +56,7 @@ class ProcessPdfLink {
         }
     }
 
-    fun extractEventDetails(input: String, sportTitle: String): EventDetails {
+    fun extractEventDetails(input: String, sportTitle: String): EventDetails? {
         // Разбиваем строку по пробелам
         val parts = input.split(" ")
 
@@ -80,6 +79,17 @@ class ProcessPdfLink {
             parts.dropWhile { it != country }.drop(2).takeWhile { !it.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}")) }
                 .joinToString(" ")
 
+        var genders = listOf(
+            "юноши",
+            "девушки", "женщины",
+            "женщины", "юниорки", "юниоры",
+            "мальчики", "девочки",
+            "юноши", "девушки"
+        )
+        if (!containsAnyFromList(targetAudience, genders)) {
+            return null
+        }
+
         // Вторая дата (дата события второго этапа)
         val secondEventDateString = parts.dropWhile { !it.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}")) }
             .drop(1)
@@ -92,52 +102,72 @@ class ProcessPdfLink {
             .joinToString(" ")
             .split(",")
             .map { it.trim() }
-
-        val filteredLocation = mutableListOf<String>()
-        val disciplines = mutableListOf<String>()
-
-        for (l in locations) {
-            if (l.contains("класс", ignoreCase = true)
-                || l.contains("дисциплин", ignoreCase = true)
-                || l.matches(Regex("[a-zA-Z]"))
-            ) {
-                if (l.startsWith("г.") || l.startsWith("село")) {
-                    filteredLocation.add("${l.split(" ")[1]}")
-                } else {
-                    val disc = l.uppercase()
-                    disciplines.addAll(
-                        disc.apply {
-                            replace("ДИСЦИПЛИНА", "")
-                            replace("ДИСЦИПЛИНЫ", "")
-                            replace("КЛАСС", "")
-                            trim()
-                        }.split(" ").filter {
-                            it.trim().isEmpty() && (it.contains(
-                                "класс",
-                                ignoreCase = false
-                            ) || it.contains("дисцип", ignoreCase = false))
-                        })
-                }
-            } else {
-                filteredLocation.add(l.trim())
-            }
+//        locations.forEach{
+//            if(containsEnglishLetter(it)) return null
+//        }
+//        if (locations.size > 2) return null
+        if (
+            !locations[0].contains("область", ignoreCase = true)
+            && !locations[0].contains("республика", ignoreCase = true)
+            && !locations[0].contains("регион", ignoreCase = true)
+            && !locations[0].contains("край", ignoreCase = true)
+        ) {
+            return null
         }
 
+        //        val filteredLocation = mutableListOf<String>()
+        //        val disciplines = mutableListOf<String>()
+        //
+        //        for (l in locations) {
+        //            if (l.contains("класс", ignoreCase = true)
+        //                || l.contains("дисциплин", ignoreCase = true)
+        //                || l.matches(Regex("[a-zA-Z]"))
+        //            ) {
+        //                if (l.startsWith("г.") || l.startsWith("село")) {
+        //                    filteredLocation.add("${l.split(" ")[1]}")
+        //                } else {
+        //                    val disc = l.uppercase()
+        //                    disciplines.addAll(
+        //                        disc.apply {
+        //                            replace("ДИСЦИПЛИНА", "", ignoreCase = true)
+        //                            replace("ДИСЦИПЛИНЫ", "", ignoreCase = true)
+        //                            replace("КЛАСС", "", ignoreCase = true)
+        //                            trim()
+        //                        }.split(" ").filter {
+        //                            it.trim().isNotEmpty() && !(it.contains(
+        //                                "класс",
+        //                                ignoreCase = false
+        //                            ) || it.contains("дисцип", ignoreCase = false))
+        //                        })
+        //                }
+        //            } else {
+        //                filteredLocation.add(l.trim())
+        //            }
+        //        }
+        val audit = targetAudience.split(",").map { it.trim() }
+        audit.apply { filter { containsAnyFromList(it, genders) && isNotEmpty() } }
+        if (audit.isEmpty()) return null
         return EventDetails(
             id = title,
             title = sportTitle,
             startDate = startDate,
             country = country,
             participants = participants,
-            targetAudience = targetAudience,
+            toDelete = targetAudience,
             secondEventDate = secondEventDate,
-            locations = filterStringsContainingEnglishLetters(filteredLocation),
-            disciplines = disciplines
+            locations = listOf(locations[0]),
+            targetAudience = audit
         )
+
     }
 
     fun filterStringsContainingEnglishLetters(strings: List<String>): List<String> {
         return strings.filter { it.contains(Regex("[a-zA-Z]")) }
+    }
+
+    fun containsEnglishLetter(input: String): Boolean {
+        val regex = ".*[a-zA-Z].*".toRegex()
+        return input.matches(regex)
     }
 
     private fun groupEvents(lines: List<String>): Map<String, String> {
@@ -205,8 +235,10 @@ class ProcessPdfLink {
 
             groupedEvents.forEach {
                 try {
-                    // Извлекаем детали мероприятия
-                    results.add(extractEventDetails(it.value, it.key.split(" ")[1]))
+                    val event = extractEventDetails(it.value, it.key.split(" ")[1])
+                    if (event != null) {
+                        results.add(event)
+                    }
                 } catch (_: Exception) {
                     logger.error("Ошибка при извлечении данных для события: ${it.key}")
                 }
@@ -218,9 +250,8 @@ class ProcessPdfLink {
                     SportEventDto(
                         ekpId = it.id.split(" ")[0],
                         title = it.id.substring(startIndex = it.id.split(" ")[0].length + 1),
-                        targetAuditory = it.targetAudience,
                         sportTitle = it.title,
-                        disciplines = it.disciplines,
+                        targetAudience = it.targetAudience,
                         startsDate = it.startDate,
                         endsDate = it.secondEventDate,
                         country = it.country,

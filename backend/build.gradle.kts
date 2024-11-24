@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+
 	implementation("io.jsonwebtoken:jjwt-api:0.12.5")
 	implementation("io.jsonwebtoken:jjwt-impl:0.12.5")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
@@ -58,8 +59,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	compileOnly("org.projectlombok:lombok")
-//	runtimeOnly("org.postgresql:postgresql")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
+//	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -10,18 +10,14 @@ class SportEvent(
     @Column(name = "ekp_id", nullable = false, unique = true)
     var ekpId: String,
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "target_auditory_id", nullable = false)
-    var targetAuditory: TargetAuditory,
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "event_discipline",
+        name = "event_target_auditory",
         joinColumns = [JoinColumn(name = "event_id")],
-        inverseJoinColumns = [JoinColumn(name = "discipline_id")]
+        inverseJoinColumns = [JoinColumn(name = "target_auditory_id")]
     )
     @JsonManagedReference
-    var disciplines: MutableList<Discipline>,
+    var targetAuditory: MutableList<TargetAuditory>,
 
     @Column(name = "title", nullable = false)
     var title: String,

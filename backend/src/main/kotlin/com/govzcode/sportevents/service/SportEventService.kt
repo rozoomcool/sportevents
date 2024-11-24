@@ -5,7 +5,6 @@ import com.govzcode.sportevents.dto.SportEventDto
 import com.govzcode.sportevents.entity.*
 import com.govzcode.sportevents.repository.*
 import jakarta.transaction.Transactional
-import org.springframework.data.domain.Example
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
@@ -15,7 +14,6 @@ class SportEventService(
     private val sportEventRepository: SportEventRepository,
     private val countryRepository: CountryRepository,
     private val regionRepository: RegionRepository,
-    private val disciplineRepository: DisciplineRepository,
     private val targetAuditoryRepository: TargetAuditoryRepository,
 ) {
 
@@ -54,12 +52,9 @@ class SportEventService(
             regionRepository.findByName(it) ?: regionRepository.save(Region(it))
         }
 
-        val disciplines = sportEventDto.disciplines.map {
-            disciplineRepository.findByName(it) ?: disciplineRepository.save(Discipline(it))
+        val disciplines = sportEventDto.targetAudience.map {
+            targetAuditoryRepository.findByName(it) ?: targetAuditoryRepository.save(TargetAuditory(it))
         }
-
-        val targetAuditory = targetAuditoryRepository.findByName(sportEventDto.targetAuditory)
-            ?: targetAuditoryRepository.save(TargetAuditory(sportEventDto.targetAuditory))
 
         // Создаем SportEvent и сохраняем
         val sportEvent = SportEvent(
@@ -67,8 +62,7 @@ class SportEventService(
             startsDate = sportEventDto.startsDate,
             endsDate = sportEventDto.endsDate,
             numberOfParticipant = sportEventDto.numberOfParticipants,
-            disciplines = disciplines.toMutableList(),
-            targetAuditory = targetAuditory,
+            targetAuditory = disciplines.toMutableList(),
             country = country,
             regions = regions.toMutableSet(),
             title = sportEventDto.title,

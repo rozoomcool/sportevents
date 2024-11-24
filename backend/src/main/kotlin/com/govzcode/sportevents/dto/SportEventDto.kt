@@ -10,13 +10,9 @@ data class SportEventDto(
     @NotBlank(message = "Ключ не может быть пустыми")
     val ekpId: String,
 
-    @Schema(description = "Возрастная категория", example = "от 14 до 17")
-    @NotBlank(message = "Возрастная категория не может быть пустыми")
-    val targetAuditory: String,
-
     @Schema(description = "Дисциплина", example = "метание козявок")
     @NotBlank(message = "Дисциплина не может быть пустой")
-    val disciplines: List<String>,
+    val targetAudience: List<String>,
 
     @Schema(description = "Название", example = "Туда сюда миллионер")
     @NotBlank(message = "Название не может быть пустой")
