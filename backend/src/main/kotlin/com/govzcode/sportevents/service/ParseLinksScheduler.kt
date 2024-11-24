@@ -39,8 +39,8 @@ class ParseLinksScheduler(
         try {
             logger.info("START PROCESS PDF LINKS")
             val processPdfLink = processPdfLinkProvider.getObject()
-            val link = eventLinkService.findUnChecked() ?: return
-            val data = processPdfLink.getPdfData(link.link){
+//            val link = eventLinkService.findUnChecked() ?: return
+            val data = processPdfLink.getPdfData("https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"){
                 try {
                     sportEventService.createSportEvent(it)
                 } catch (e: Exception) {
