@@ -44,8 +44,8 @@ dependencies {
 //	implementation("de.codecentric:spring-boot-admin-starter-server:3.3.3")
 
 //	implementation("org.springframework.boot:spring-boot-starter-data-rest")
-	implementation("com.turkraft.springfilter:jpa:3.1.7")
-	implementation("com.turkraft.springfilter:core:3.1.7")
+//	implementation("com.turkraft.springfilter:jpa:3.1.7")
+//	implementation("com.turkraft.springfilter:core:3.1.7")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
