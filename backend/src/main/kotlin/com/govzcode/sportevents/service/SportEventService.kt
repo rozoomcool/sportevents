@@ -4,10 +4,14 @@ import com.govzcode.sportevents.dto.PageableDto
 import com.govzcode.sportevents.dto.SportEventDto
 import com.govzcode.sportevents.entity.*
 import com.govzcode.sportevents.repository.*
+import jakarta.persistence.EntityManager
+import jakarta.persistence.criteria.*
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class SportEventService(
@@ -15,6 +19,7 @@ class SportEventService(
     private val countryRepository: CountryRepository,
     private val regionRepository: RegionRepository,
     private val targetAuditoryRepository: TargetAuditoryRepository,
+    private val entityManager: EntityManager
 ) {
 
     fun filter(spec: Specification<SportEvent>, page: Pageable): PageableDto<SportEvent> {
@@ -26,6 +31,69 @@ class SportEventService(
             size = entity.size,
             totalPages = entity.count()
         )
+    }
+
+    fun getRandom(): SportEvent? {
+        val max = sportEventRepository.count()
+        return sportEventRepository.findById(Random().nextLong(max)).getOrNull()
+    }
+
+    fun findSportEventsByCriteria(
+        title: String?,
+        sportTitle: String?,
+        startDate: Date?,
+        endDate: Date?,
+        country: String?,
+        regions: Set<String>?,
+        pageable: Pageable
+    ): List<SportEvent> {
+
+        // Получаем CriteriaBuilder
+        val cb: CriteriaBuilder = entityManager.criteriaBuilder
+
+        // Создаем запрос
+        val query: CriteriaQuery<SportEvent> = cb.createQuery(SportEvent::class.java)
+
+        // Корневой объект (SportEvent)
+        val sportEvent: Root<SportEvent> = query.from(SportEvent::class.java)
+
+        // Список условий для фильтрации
+        val predicates: MutableList<Predicate> = mutableListOf()
+
+        // Условие для title
+        title?.let { predicates.add(cb.like(sportEvent.get<String>("title"), "%$it%")) }
+
+        // Условие для sportTitle
+        sportTitle?.let { predicates.add(cb.like(sportEvent.get<String>("sportTitle"), "%$it%")) }
+
+        // Условие для startDate
+        startDate?.let { predicates.add(cb.greaterThanOrEqualTo(sportEvent.get("startsDate"), startDate)) }
+
+        // Условие для endDate
+        endDate?.let { predicates.add(cb.lessThanOrEqualTo(sportEvent.get("endsDate"), endDate)) }
+
+        // Условие для countryId
+        country?.let {
+            val countryJoin: Join<SportEvent, Country> = sportEvent.join<SportEvent, Country>("country")
+            predicates.add(cb.equal(countryJoin.get<String>("name"), it))
+        }
+
+        // Условие для regionIds
+        regions?.let {
+            val regionJoin: Join<SportEvent, Region> = sportEvent.join<SportEvent, Region>("regions")
+            predicates.add(regionJoin.get<String>("name").`in`(it))
+        }
+
+        // Применяем все условия
+        query.select(sportEvent).where(cb.and(*predicates.toTypedArray()))
+
+        // Создаем запрос с пагинацией
+        val typedQuery = entityManager.createQuery(query)
+        typedQuery.firstResult = pageable.offset.toInt()
+        typedQuery.maxResults = pageable.pageSize
+
+        // Выполняем запрос и возвращаем результат
+        return typedQuery.resultList
     }
 
     fun page(page: Pageable): PageableDto<SportEvent> {
