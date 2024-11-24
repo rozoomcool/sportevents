@@ -1,7 +1,6 @@
 package com.govzcode.sportevents.repository
 
 import com.govzcode.sportevents.entity.SportEvent
-import com.turkraft.springfilter.boot.Filter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -12,6 +11,6 @@ import org.springframework.data.web.PagedModel
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SportEventRepository : CrudRepository<SportEvent, Long>, JpaSpecificationExecutor<SportEvent> {
-    fun findAll(pageable: Pageable): Page<SportEvent>
+interface SportEventRepository : JpaRepository<SportEvent, Long>, JpaSpecificationExecutor<SportEvent> {
+//    fun findAll(spec: Specification<SportEvent?>?, pageable: Pageable): Page<SportEvent>
 }

@@ -2,12 +2,20 @@ package com.govzcode.sportevents.controller
 
 import com.govzcode.sportevents.dto.PageableDto
 import com.govzcode.sportevents.dto.SportEventDto
+import com.govzcode.sportevents.entity.Country
+import com.govzcode.sportevents.entity.Region
 import com.govzcode.sportevents.entity.SportEvent
 import com.govzcode.sportevents.repository.SportEventRepository
 import com.govzcode.sportevents.service.FilterService
 import com.govzcode.sportevents.service.SportEventService
-import com.turkraft.springfilter.boot.Filter
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 import jakarta.validation.Valid
+import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -15,13 +23,18 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
+import java.util.*
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/events")
 class SportEventController(
-    private val sportEventService: SportEventService,
-    private val filterService: FilterService
+    private val sportEventService: SportEventService
 ) {
+
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
     @GetMapping("/search")
     fun search(
         @RequestParam(defaultValue = "10") size: Int,
@@ -32,14 +45,14 @@ class SportEventController(
 
     @GetMapping("/filter")
     fun filter(
-        @Filter
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam params: Map<String, String>,
     ): PageableDto<SportEvent> {
+        logger.info(":::::: $params")
         return sportEventService.filter(
-            filterService.buildSpecification<SportEvent>(params, SportEvent::class.java),
-            PageRequest.of(page, size)
+            buildSportEventSpecification(params),
+            PageRequest.of(1, 10)
         )
     }
 
@@ -49,4 +62,74 @@ class SportEventController(
         return sportEventService.createSportEvent(sportEventDto)
     }
 
+}
+
+fun buildSportEventSpecification(params: Map<String, String>): Specification<SportEvent> {
+    return Specification { root, query, criteriaBuilder ->
+        var predicates: Predicate = criteriaBuilder.conjunction()
+
+        params.forEach { (field, value) ->
+            when (field) {
+                "title" -> {
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.like(root.get<String>("title"), "%$value%")
+                    )
+                }
+                "sportTitle" -> {
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.like(root.get<String>("sportTitle"), "%$value%")
+                    )
+                }
+                "ekpId" -> {
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.equal(root.get<String>("ekpId"), value)
+                    )
+                }
+                "startDate" -> {
+                    val startDate = value.toDate()
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get<Date>("startsDate"), startDate)
+                    )
+                }
+                "endDate" -> {
+                    val endDate = value.toDate()
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.lessThanOrEqualTo(root.get<Date>("endsDate"), endDate)
+                    )
+                }
+                "country" -> {
+                    predicates = criteriaBuilder.and(
+                        predicates,
+                        criteriaBuilder.equal(root.get<Country>("country").get<String>("name"), value) // Для связи с сущностью Country
+                    )
+                }
+                "regions" -> {
+                    val regionNames = value.split(",")
+
+                    val regionPredicate: Predicate = root.get<Region>("regions")
+                        .get<String>("name")
+                        .`in`(regionNames)
+
+                    predicates = criteriaBuilder.and(predicates, regionPredicate)
+                }
+                else -> {
+                }
+            }
+        }
+        return@Specification predicates
+    }
+}
+
+fun String.toDate(): Date? {
+    val format = SimpleDateFormat("yyyy-MM-dd") // Используем стандартный формат
+    return try {
+        format.parse(this)
+    } catch (e: Exception) {
+        null
+    }
 }

@@ -3,6 +3,8 @@ package com.govzcode.sportevents.service
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
 import jakarta.persistence.criteria.Root
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
@@ -16,6 +18,7 @@ data class Filter(
 class FilterService {
 
     private val filterRegistry: MutableMap<String, Filter> = mutableMapOf()
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // Метод для добавления фильтра
     fun addFilter(filter: Filter) {
@@ -39,7 +42,7 @@ class FilterService {
                         "equals" -> {
                             // Обработка фильтра по равенству
                             when (val fieldType = root.get<Any>(field).javaType) {
-                                String::class.java -> criteriaBuilder.equal(root.get<String>(field), value)
+                                String::class.java -> criteriaBuilder.equal(root.get<String>(field), "%$value%")
                                 Integer::class.java -> criteriaBuilder.equal(root.get<Int>(field), value.toInt())
                                 else -> criteriaBuilder.equal(root.get<Any>(field), value)
                             }

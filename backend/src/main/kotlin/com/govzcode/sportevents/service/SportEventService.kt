@@ -31,7 +31,7 @@ class SportEventService(
     }
 
     fun page(page: Pageable): PageableDto<SportEvent> {
-        val entity = sportEventRepository.findAll(page)
+        val entity = sportEventRepository.findAll(null, page)
         return PageableDto(
             content = entity.content,
             totalElements = entity.totalElements,
